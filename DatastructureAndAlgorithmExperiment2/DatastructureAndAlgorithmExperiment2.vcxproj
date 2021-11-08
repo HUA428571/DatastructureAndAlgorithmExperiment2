@@ -30,7 +30,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -139,9 +139,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Function.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MENU.cpp" />
+    <ClCompile Include="MENUchoose.cpp" />
+    <ClCompile Include="print.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Function.h" />
+    <ClInclude Include="MENU.h" />
+    <ClInclude Include="MENUchoose.h" />
+    <ClInclude Include="print.h" />
     <ClInclude Include="struct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

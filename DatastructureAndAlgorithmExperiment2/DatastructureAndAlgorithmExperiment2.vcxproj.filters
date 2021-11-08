@@ -18,9 +18,33 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Function.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MENU.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MENUchoose.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="print.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="struct.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MENU.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MENUchoose.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="print.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
