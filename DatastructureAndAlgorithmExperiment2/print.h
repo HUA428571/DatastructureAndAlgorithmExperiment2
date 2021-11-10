@@ -19,3 +19,7 @@ void PrintHomeBG(PlateDatabase* DataBase);
 void PrintSearchBG(PlateDatabase* DataBase);
 
 void PrintPlateDetail(PlateDatabase* DataBase, int ID);
+
+void PrintPlateDetail(Plate Plate);
+
+void PrintCustomBG(PlateDatabase* DataBase);

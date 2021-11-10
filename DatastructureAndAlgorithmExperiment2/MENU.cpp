@@ -101,7 +101,7 @@ int CheckID(char* n, char* m, USER u[10])
 	return -1;
 }
 
-int AdminMENU(PlateDatabase*  DataBase, PlateIndex* Index)
+int AdminMENU(PlateDatabase* DataBase, PlateIndex* Index)
 {
 	// 设置背景色为淡白色
 	setbkcolor(RGB(255, 255, 253));
@@ -117,7 +117,7 @@ int AdminMENU(PlateDatabase*  DataBase, PlateIndex* Index)
 	_tcscpy_s(format.lfFaceName, _T(FONT));		// 设置字体为FONT
 	settextstyle(&format);						// 设置字体样式
 	int MENUchoice;
-	MENUchoice = AdminMENU_HomeMENU(DataBase,Index);		//先进入主页
+	MENUchoice = AdminMENU_HomeMENU(DataBase, Index);		//先进入主页
 	while (true)											//循环
 	{
 		switch (MENUchoice)
@@ -136,6 +136,8 @@ int AdminMENU(PlateDatabase*  DataBase, PlateIndex* Index)
 			break;
 		case 4:
 			MENUchoice = AdminMENU_ChangeMENU(DataBase, Index);
+			break;
+		case -1:
 			return 0;
 		}
 	}
@@ -157,11 +159,11 @@ int AdminMENU_HomeMENU(PlateDatabase* DataBase, PlateIndex* Index)
 		case 3:
 		case 4:
 			return MENUchoice;
-		//导入车牌数据
+			//导入车牌数据
 		case 51:
 			MENUchoice = AdminMENU_HomeMENU_Import(DataBase, Index, Location);
 			break;
-		//导出车牌数据
+			//导出车牌数据
 		case 52:
 			MENUchoice = AdminMENU_HomeMENU_Export(DataBase, Index, Location);
 			break;
@@ -170,17 +172,17 @@ int AdminMENU_HomeMENU(PlateDatabase* DataBase, PlateIndex* Index)
 			int SortResult[MAXSIZE];
 			if ((fp = fopen(".\\Data\\AutoSave_PlateDatabase.txt", "w")) == NULL)
 			{
-				clearrectangle(400, 200, 1220, 400);
+				clearrectangle(400, 200, 1220, 700);
 				outtextxy(400, 200, "文件打开失败");
 			}
 			DataBaseInsertSortWithCity(DataBase, SortResult);
 			ExportDatabase(fp, DataBase, SortResult);
 			fclose(fp);
 			closegraph();			// 关闭绘图窗口
-			return 0;
+			return -1;
 		case 62:
 			closegraph();			// 关闭绘图窗口
-			return 0;
+			return -1;
 		}
 	}
 }
@@ -204,7 +206,7 @@ int AdminMENU_HomeMENU_Import(PlateDatabase* DataBase, PlateIndex* Index, char L
 	outtextxy(110, 230, count);
 	outtextxy(162, 230, "个车牌数据");
 	settextcolor(BLACK);
-	outtextxy(400, 200, "将从以下目录导入航线数据库：");
+	outtextxy(400, 200, "将从以下目录导入车牌数据库：");
 	settextstyle(20, 0, FONT);
 	outtextxy(400, 240, Location[0]);
 	int MENUchoice = AdminMENU_HomeMENU_Import_MENUChoose();
@@ -230,12 +232,12 @@ int AdminMENU_HomeMENU_Import(PlateDatabase* DataBase, PlateIndex* Index, char L
 			FILE * fp;
 			if ((fp = fopen(Location[0], "r")) == NULL)
 			{
-				clearrectangle(400, 200, 1220, 400);
+				clearrectangle(400, 200, 1220, 700);
 				outtextxy(400, 200, "文件打开失败");
 			}
 			ImportDatabase(fp, DataBase);
 			fclose(fp);
-			clearrectangle(400, 200, 1220, 400);
+			clearrectangle(400, 200, 1220, 700);
 			settextstyle(25, 0, FONT);
 			outtextxy(400, 200, "导入了");
 			char count[8];
@@ -245,12 +247,13 @@ int AdminMENU_HomeMENU_Import(PlateDatabase* DataBase, PlateIndex* Index, char L
 			Sleep(500);
 			return 0;//返回主页
 		case 58:
-			clearrectangle(400, 200, 1220, 400);
+			settextstyle(25, 0, FONT);
+			clearrectangle(400, 200, 1220, 700);
 			outtextxy(420, 200, "已取消导入");
 			Sleep(500);
 			return 0;//返回主页
 		case 59:
-			clearrectangle(400, 280, 1220, 300);
+			clearrectangle(400, 240, 1220, 300);
 			char LocationTEMP[100] = "\0";
 			C_InputBox(LocationTEMP, 99, 400, 280, 600, 20, Location[0]);
 			if (LocationTEMP[1] == 0)//如果输入为空，则返回原有目录
@@ -262,7 +265,7 @@ int AdminMENU_HomeMENU_Import(PlateDatabase* DataBase, PlateIndex* Index, char L
 			{
 				strcpy(Location[0], LocationTEMP);
 			}
-			return AdminMENU_HomeMENU_Import(DataBase,Index, Location);
+			return AdminMENU_HomeMENU_Import(DataBase, Index, Location);
 		}
 	}
 }
@@ -272,7 +275,7 @@ int AdminMENU_HomeMENU_Export(PlateDatabase* DataBase, PlateIndex* Index, char L
 	setbkcolor(RGB(255, 255, 253));
 	IMAGE BG;
 	LOGFONT format;
-	loadimage(&BG, _T(".\\IMAGES\\AdminMenu_Home_Import.png"), 1280, 720);
+	loadimage(&BG, _T(".\\IMAGES\\AdminMenu_Home_Export.png"), 1280, 720);
 	putimage(0, 0, &BG);	// 在另一个位置再次显示背景
 	settextcolor(BLACK);
 	gettextstyle(&format);						// 获取当前字体设置
@@ -286,9 +289,9 @@ int AdminMENU_HomeMENU_Export(PlateDatabase* DataBase, PlateIndex* Index, char L
 	outtextxy(110, 230, count);
 	outtextxy(162, 230, "个车牌数据");
 	settextcolor(BLACK);
-	outtextxy(400, 200, "将从以下目录导入航线数据库：");
+	outtextxy(400, 200, "将导出数据库到以下目录：");
 	settextstyle(20, 0, FONT);
-	outtextxy(400, 240, Location[0]);
+	outtextxy(400, 240, Location[1]);
 	int MENUchoice = AdminMENU_HomeMENU_Import_MENUChoose();
 	while (true)
 	{
@@ -309,19 +312,19 @@ int AdminMENU_HomeMENU_Export(PlateDatabase* DataBase, PlateIndex* Index, char L
 			MENUchoice = AdminMENU_HomeMENU_Export(DataBase, Index, Location);
 			break;
 		case 57:
-			clearrectangle(400, 200, 1220, 400);
-			FILE * fp;
+			clearrectangle(400, 200, 1220, 700);
+			FILE* fp;
 			int SortResult[MAXSIZE];
 			if ((fp = fopen(Location[1], "w")) == NULL)
 			{
-				clearrectangle(400, 200, 1220, 400);
+				clearrectangle(400, 200, 1220, 700);
 				outtextxy(400, 200, "文件打开失败");
 			}
 			DataBaseInsertSortWithCity(DataBase, SortResult);
 			ExportDatabase(fp, DataBase, SortResult);
 			fclose(fp);
 			settextstyle(25, 0, FONT);
-			clearrectangle(400, 200, 1220, 400);
+			clearrectangle(400, 200, 1220, 700);
 			outtextxy(400, 200, "导出了");
 			char count[8];
 			_stprintf(count, _T("%d"), DataBase->plateCount);
@@ -330,8 +333,9 @@ int AdminMENU_HomeMENU_Export(PlateDatabase* DataBase, PlateIndex* Index, char L
 			Sleep(500);
 			return 0;//返回主页
 		case 58:
-			clearrectangle(400, 200, 1220, 400);
-			outtextxy(420, 200, "已取消导入");
+			settextstyle(25, 0, FONT);
+			clearrectangle(400, 200, 1220, 700);
+			outtextxy(420, 200, "已取消导出");
 			Sleep(500);
 			return 0;//返回主页
 		case 59:
@@ -393,7 +397,7 @@ int AdminMENU_SearchMENU_SearchInOrder(PlateDatabase* DataBase, PlateIndex* Inde
 	outtextxy(140, 308, "苏");
 	C_InputBox(search, 8, 165, 300, "GYP343");
 	SearchResult = SearchInOrder(DataBase, search, SortResult);
-	if (SearchResult > 0)
+	if (SearchResult >= 0)
 	{
 		PrintSearchBG(DataBase);
 		PrintPlateDetail(DataBase, SearchResult);
@@ -418,7 +422,7 @@ int AdminMENU_SearchMENU_SearchInHalf(PlateDatabase* DataBase, PlateIndex* Index
 	outtextxy(140, 358, "苏");
 	C_InputBox(search, 8, 165, 350, "GYP343");
 	SearchResult = SearchInHalf(DataBase, search, SortResult);
-	if (SearchResult > 0)
+	if (SearchResult >= 0)
 	{
 		PrintSearchBG(DataBase);
 		PrintPlateDetail(DataBase, SearchResult);
@@ -448,8 +452,8 @@ int AdminMENU_SearchMENU_SearchInIndex(PlateDatabase* DataBase, PlateIndex* Inde
 	char flag = search[0];
 	start = Index->start[flag - 65];
 	end = Index->end[flag - 65];
-	SearchResult = SearchInIndex(DataBase, search, start, end);
-	if (SearchResult > 0)
+	SearchResult = SearchInIndex(DataBase, search, start, end, SortResult);
+	if (SearchResult >= 0)
 	{
 		PrintSearchBG(DataBase);
 		PrintPlateDetail(DataBase, SearchResult);
@@ -465,17 +469,348 @@ int AdminMENU_SearchMENU_SearchInIndex(PlateDatabase* DataBase, PlateIndex* Inde
 
 int AdminMENU_AddMENU(PlateDatabase* DataBase, PlateIndex* Index)
 {
-	return 0;
+	cleardevice();
+	setbkcolor(RGB(255, 255, 253));
+	IMAGE BG;
+	LOGFONT format;
+	loadimage(&BG, _T(".\\IMAGES\\AdminMenu_Add.png"), 1280, 720);
+	putimage(0, 0, &BG);	// 在另一个位置再次显示背景
+	settextcolor(BLACK);
+	gettextstyle(&format);						// 获取当前字体设置
+	format.lfHeight = 25;						// 设置字体高度为 25
+	_tcscpy_s(format.lfFaceName, _T(FONT));	// 设置字体为FONT
+	format.lfQuality = PROOF_QUALITY;			// 设置输出效果为最高质量  
+	settextstyle(&format);						// 设置字体样式
+	char count[8];
+	_stprintf(count, _T("%d"), DataBase->plateCount);
+	outtextxy(110, 200, "当前数据库中有");
+	outtextxy(110, 230, count);
+	outtextxy(162, 230, "个车牌数据");
+	settextcolor(BLACK);
+	Plate PlateTemp;
+	char buffer[99];
+	InputBox(buffer, 8, "请输入要添加的车牌号\n不需要输入“苏”，eg A10A10");
+	PlateTemp.city = buffer[0];
+	for (int i = 1; i < 99; i++)
+	{
+		PlateTemp.number[i - 1] = buffer[i];
+		if (buffer[i] == 0)
+			break;
+	}
+	InputBox(PlateTemp.cartype, 99, "请输入添加的车牌的车辆信息\n车架号：");
+	InputBox(PlateTemp.ownerName, 99, "请输入添加的车牌的车主信息\n车主姓名：");
+	InputBox(PlateTemp.ownerPhone, 99, "请输入添加的车牌的车主信息\n车主手机：");
+	PrintPlateDetail(PlateTemp);
+	int MENUchoice = AdminMENU_AddMENU_MENUChoose();
+	while (true)
+	{
+		switch (MENUchoice)
+		{
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			return MENUchoice;
+			//确认添加
+		case 21:
+			DataBase->plate[DataBase->plateCount] = PlateTemp;
+			settextstyle(25, 0, FONT);
+			clearrectangle(400, 200, 1220, 700);
+			DataBase->plateCount++;
+			outtextxy(420, 200, "成功添加！");
+			Sleep(500);
+			return 0;
+			//取消添加
+		case 22:
+			outtextxy(420, 200, "已取消添加！");
+			Sleep(500);
+			return 0;
+		}
+	}
+
 }
 int AdminMENU_DeleteMENU(PlateDatabase* DataBase, PlateIndex* Index)
 {
+	cleardevice();
+	setbkcolor(RGB(255, 255, 253));
+	IMAGE BG;
+	LOGFONT format;
+	loadimage(&BG, _T(".\\IMAGES\\AdminMenu_Delete.png"), 1280, 720);
+	putimage(0, 0, &BG);	// 在另一个位置再次显示背景
+	settextcolor(BLACK);
+	gettextstyle(&format);						// 获取当前字体设置
+	format.lfHeight = 25;						// 设置字体高度为 25
+	_tcscpy_s(format.lfFaceName, _T(FONT));	// 设置字体为FONT
+	format.lfQuality = PROOF_QUALITY;			// 设置输出效果为最高质量  
+	settextstyle(&format);						// 设置字体样式
+	char count[8];
+	_stprintf(count, _T("%d"), DataBase->plateCount);
+	outtextxy(110, 200, "当前数据库中有");
+	outtextxy(110, 230, count);
+	outtextxy(162, 230, "个车牌数据");
+	settextcolor(BLACK);
 	char Delete[8];
 	InputBox(Delete, 8, "请输入你想删除的车牌\n不需要输入“苏”，eg A10A10");
 	int SearchResult = Search(DataBase, Delete);
-	outtextxy(100, 100, DataBase->plate[SearchResult].number);
-	return AdminMENU_DeleteMENU_MENUChoose();
+	if (SearchResult >= 0)
+	{
+		PrintPlateDetail(DataBase, SearchResult);
+	}
+	else
+	{
+		settextstyle(25, 0, FONT);
+		outtextxy(380, 200, "没有找到符合要求的车牌信息！");
+		return AdminMENU_MENUChoose();
+	}
+	int MENUchoice = AdminMENU_AddMENU_MENUChoose();
+	while (true)
+	{
+		switch (MENUchoice)
+		{
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			return MENUchoice;
+			//确认删除
+		case 21:
+			for (int i = SearchResult; i < DataBase->plateCount - 1; i++)
+			{
+				DataBase->plate[i] = DataBase->plate[i + 1];
+			}
+			settextstyle(25, 0, FONT);
+			clearrectangle(400, 200, 1220, 700);
+			DataBase->plateCount--;
+			outtextxy(420, 200, "成功删除！");
+			Sleep(500);
+			return 0;
+			//取消删除
+		case 22:
+			return 0;
+		}
+	}
 }
 int AdminMENU_ChangeMENU(PlateDatabase* DataBase, PlateIndex* Index)
 {
-	return 0;
+	cleardevice();
+	setbkcolor(RGB(255, 255, 253));
+	IMAGE BG;
+	LOGFONT format;
+	loadimage(&BG, _T(".\\IMAGES\\AdminMenu.png"), 1280, 720);
+	putimage(0, 0, &BG);	// 在另一个位置再次显示背景
+	settextcolor(BLACK);
+	gettextstyle(&format);						// 获取当前字体设置
+	format.lfHeight = 25;						// 设置字体高度为 25
+	_tcscpy_s(format.lfFaceName, _T(FONT));	// 设置字体为FONT
+	format.lfQuality = PROOF_QUALITY;			// 设置输出效果为最高质量  
+	settextstyle(&format);						// 设置字体样式
+	char count[8];
+	_stprintf(count, _T("%d"), DataBase->plateCount);
+	outtextxy(110, 200, "当前数据库中有");
+	outtextxy(110, 230, count);
+	outtextxy(162, 230, "个车牌数据");
+	settextcolor(BLACK);
+	char Delete[8];
+	InputBox(Delete, 8, "请输入你想修改的车牌\n不需要输入“苏”，eg A10A10");
+	int SearchResult = Search(DataBase, Delete);
+	if (SearchResult < 0)
+	{
+		settextstyle(25, 0, FONT);
+		outtextxy(380, 200, "没有找到符合要求的车牌信息！");
+		return AdminMENU_MENUChoose();
+	}
+	loadimage(&BG, _T(".\\IMAGES\\AdminMenu_Change.png"), 1280, 720);
+	putimage(0, 0, &BG);	// 在另一个位置再次显示背景
+	char buffer[99];
+	char CITY[16] = "\0";
+	Plate PlateTemp = DataBase->plate[SearchResult];
+	PrintPlateDetail(DataBase, SearchResult);
+	int MENUchoice = AdminMENU_ChangeMENU_MENUChoose();
+	while (true)
+	{
+		switch (MENUchoice)
+		{
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			return MENUchoice;
+			//确认删除
+		case 101:
+			InputBox(buffer, 8, "请输入更改后的车牌号\n不需要输入“苏”，eg A10A10");
+			if (Search(DataBase, buffer) >= 0)
+			{
+				settextstyle(26, 0, FONT);
+				outtextxy(400, 200, "已经存在的车牌号！");
+				Sleep(500);
+				PrintPlateDetail(DataBase, SearchResult);
+				MENUchoice = AdminMENU_ChangeMENU_MENUChoose();
+				break;
+			}
+			PlateTemp.city = buffer[0];
+			for (int i = 1; i < 99; i++)
+			{
+				PlateTemp.number[i - 1] = buffer[i];
+				if (buffer[i] == 0)
+					break;
+			}
+			clearrectangle(400, 240, 700, 300);
+			settextstyle(25, 0, FONT);
+			outtextxy(400, 240, "车牌号：");
+			outtextxy(500, 240, "苏");
+			outtextxy(525, 240, PlateTemp.city);
+			outtextxy(540, 240, PlateTemp.number);
+			outtextxy(400, 270, "车辆归属地：");
+			MatchCarCity(PlateTemp.city, CITY);
+			outtextxy(550, 270, CITY);
+			MENUchoice = AdminMENU_ChangeMENU_MENUChoose();
+			break;
+		case 102:
+			InputBox(PlateTemp.cartype, 99, "请输入更改后的车辆信息\n车架号：");
+			clearrectangle(400, 380, 800, 410);
+			settextstyle(25, 0, FONT);
+			outtextxy(400, 380, "车架号：");
+			outtextxy(500, 380, PlateTemp.cartype);
+			MENUchoice = AdminMENU_ChangeMENU_MENUChoose();
+			break;
+		case 103:
+			InputBox(PlateTemp.ownerName, 99, "请输入更改后的车主信息\n车主姓名：");
+			clearrectangle(400, 490, 800, 520);
+			settextstyle(25, 0, FONT);
+			outtextxy(400, 490, "姓名：");
+			outtextxy(475, 490, PlateTemp.ownerName);
+			MENUchoice = AdminMENU_ChangeMENU_MENUChoose();
+			break;
+		case 104:
+			InputBox(PlateTemp.ownerPhone, 99, "请输入更改后的车主信息\n车主手机：");
+			clearrectangle(400, 520, 800, 550);
+			settextstyle(25, 0, FONT);
+			outtextxy(400, 520, "手机：");
+			outtextxy(475, 520, PlateTemp.ownerPhone);
+			MENUchoice = AdminMENU_ChangeMENU_MENUChoose();
+			break;
+			//确认添加
+		case 21:
+			DataBase->plate[SearchResult] = PlateTemp;
+			settextstyle(25, 0, FONT);
+			clearrectangle(400, 200, 1220, 700);
+			outtextxy(420, 200, "成功更改！");
+			Sleep(500);
+			return 0;
+			//取消添加
+		case 22:
+			outtextxy(420, 200, "已取消更改！");
+			Sleep(500);
+			return 0;
+		}
+	}
+}
+
+int CustomMENU(PlateDatabase* DataBase, PlateIndex* Index)
+{
+	PrintCustomBG(DataBase);
+
+	int MENUchoice = CustomMENU_MENUChoose();
+	while (true)
+	{
+		switch (MENUchoice)
+		{
+		case 51:
+			MENUchoice = CustomMENU_SearchMENU_SearchInOrder(DataBase, Index);
+			break;
+		case 52:
+			MENUchoice = CustomMENU_SearchMENU_SearchInHalf(DataBase, Index);
+			break;
+		case 53:
+			MENUchoice = CustomMENU_SearchMENU_SearchInIndex(DataBase, Index);
+			break;
+		case 62:
+			closegraph();			// 关闭绘图窗口
+			return 0;
+		}
+	}
+}
+int CustomMENU_SearchMENU_SearchInOrder(PlateDatabase* DataBase, PlateIndex* Index)
+{
+	//对数据库进行排序
+	int SortResult[MAXSIZE];
+	DataBaseInsertSort(DataBase, SortResult);
+	char search[8];
+	int SearchResult;
+	clearrectangle(135, 300, 300, 340);
+	settextstyle(26, 0, FONT);
+	outtextxy(140, 308, "苏");
+	C_InputBox(search, 8, 165, 300, "GYP343");
+	SearchResult = SearchInOrder(DataBase, search, SortResult);
+	if (SearchResult >= 0)
+	{
+		PrintCustomBG(DataBase);
+		PrintPlateDetail(DataBase, SearchResult);
+	}
+	else
+	{
+		PrintCustomBG(DataBase);
+		settextstyle(25, 0, FONT);
+		outtextxy(380, 200, "没有找到符合要求的车牌信息！");
+	}
+	return CustomMENU_MENUChoose();
+}
+int CustomMENU_SearchMENU_SearchInHalf(PlateDatabase* DataBase, PlateIndex* Index)
+{
+	//对数据库进行排序
+	int SortResult[MAXSIZE];
+	DataBaseInsertSort(DataBase, SortResult);
+	char search[8];
+	int SearchResult;
+	clearrectangle(135, 350, 300, 390);
+	settextstyle(26, 0, FONT);
+	outtextxy(140, 358, "苏");
+	C_InputBox(search, 8, 165, 350, "GYP343");
+	SearchResult = SearchInHalf(DataBase, search, SortResult);
+	if (SearchResult >= 0)
+	{
+		PrintCustomBG(DataBase);
+		PrintPlateDetail(DataBase, SearchResult);
+	}
+	else
+	{
+		PrintCustomBG(DataBase);
+		settextstyle(25, 0, FONT);
+		outtextxy(380, 200, "没有找到符合要求的车牌信息！");
+	}
+	return CustomMENU_MENUChoose();
+}
+int CustomMENU_SearchMENU_SearchInIndex(PlateDatabase* DataBase, PlateIndex* Index)
+{
+	//对数据库进行排序
+	int SortResult[MAXSIZE];
+	//对整个车牌包含城市进行排序
+	DataBaseInsertSortWithCity(DataBase, SortResult);
+	char search[8];
+	int SearchResult;
+	clearrectangle(135, 400, 300, 440);
+	settextstyle(26, 0, FONT);
+	outtextxy(140, 408, "苏");
+	C_InputBox(search, 8, 165, 400, "GYP343");
+	int start, end;
+	initIndex(DataBase, Index, SortResult);
+	char flag = search[0];
+	start = Index->start[flag - 65];
+	end = Index->end[flag - 65];
+	SearchResult = SearchInIndex(DataBase, search, start, end, SortResult);
+	if (SearchResult >= 0)
+	{
+		PrintCustomBG(DataBase);
+		PrintPlateDetail(DataBase, SearchResult);
+	}
+	else
+	{
+		PrintCustomBG(DataBase);
+		settextstyle(25, 0, FONT);
+		outtextxy(380, 200, "没有找到符合要求的车牌信息！");
+	}
+	return CustomMENU_MENUChoose();
 }

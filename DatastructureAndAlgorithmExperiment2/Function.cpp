@@ -74,7 +74,7 @@ int C_InputBox(char* Input, int Limit, int x, int y, const char* Default)
 	setlinecolor(BLACK);
 	line(x, y + 35, x + 120, y + 35);
 	settextcolor(RGB(220, 220, 220));
-	outtextxy(x + 1, y+6, Default);
+	outtextxy(x + 1, y + 6, Default);
 	settextcolor(BLACK);
 	FlushMouseMsgBuffer();
 	while (true)
@@ -110,7 +110,7 @@ int C_InputBox(char* Input, int Limit, int x, int y, const char* Default)
 					Length--;
 					clearrectangle(x + 15 * Length, y, x + 15 + 15 * Length, y + 34);
 					setlinecolor(BLACK);
-					line(x+ Length * 15, y + 35, x + 15 + Length * 15, y + 35);
+					line(x + Length * 15, y + 35, x + 15 + Length * 15, y + 35);
 				}
 			}
 		}
@@ -383,67 +383,38 @@ void DataBaseInsertSortWithCity(plateDatabase* DataBase, int* SortReasult)
 	int cmpID;
 	for (i = 1; i < DataBase->plateCount; i++)//循环从第二个元素开始
 	{
+#ifdef DEBUG
+		if (i == 499)
+		{
+			Sleep(10);
+		}
+#endif // DEBUG
 		cmpID = SortReasult[i];
 		cmp = DataBase->plate[SortReasult[i]];
 		for (j = i - 1; j >= 0; j--)//从后向前遍历
 		{
 			//如果该元素大于待插入元素，则向后挪一个位置为待插入元素空出空间
+			//先考虑城市，城市代码更大，直接向后移动
 			if (cmp.city < DataBase->plate[SortReasult[j]].city)
 			{
-				if (strcmp(cmp.number, DataBase->plate[SortReasult[j]].number) < 0)
-					SortReasult[j + 1] = SortReasult[j];
+				SortReasult[j + 1] = SortReasult[j];
+			}
+			else
+			{
+				if (cmp.city == DataBase->plate[SortReasult[j]].city)
+				{
+					if (strcmp(cmp.number, DataBase->plate[SortReasult[j]].number) < 0)
+						SortReasult[j + 1] = SortReasult[j];
+					else
+						break;
+				}
 				else
 					break;
 			}
-			else
-				break;
 		}
 		SortReasult[j + 1] = cmpID;//待插入元素放入有序序列中
 	}
 }
-
-//void DataBaseInsertSortWithCity(plateDatabase* DataBase, int* SortReasult)
-//{
-//	//首先要初始化一下存储排序结果的数组
-//	for (int i = 0; i < DataBase->plateCount; i++)
-//	{
-//		SortReasult[i] = i;
-//	}
-//	int i, j;//i为待插入元素下标
-//	int cmpID;
-//	char tmpi[8] = { 'X','\0' };
-//	char tmpj[8] = { 'X','\0' };
-//	for (i = 1; i < DataBase->plateCount; i++)//循环从第二个元素开始
-//	{
-//		cmpID = SortReasult[i];
-//		tmpi[1] = '\0';
-//		tmpj[1] = '\0';
-//		tmpi[0] = DataBase->plate[SortReasult[i]].city;
-//		strcat(tmpi, DataBase->plate[SortReasult[i]].number);
-//		for (j = i - 1; j >= 0; j--)//从后向前遍历
-//		{
-//			//如果该元素大于待插入元素，则向后挪一个位置为待插入元素空出空间
-//			tmpj[0] = DataBase->plate[SortReasult[j]].city;
-//			tmpj[1] = '\0';
-//			strcat(tmpj, DataBase->plate[SortReasult[j]].number);
-//			if (strcmp(tmpi, tmpj) < 0)
-//				SortReasult[j + 1] = SortReasult[j];
-//			else break;
-//		}
-//		SortReasult[j + 1] = cmpID;//待插入元素放入有序序列中
-//#ifdef DEBUG
-//		if (i = 426)
-//		{
-//			FILE* fp;
-//
-//			for (int a = 0; a < 500; a++)
-//			{
-//				printf("%d\t", SortReasult[a]);
-//			}
-//		}
-//#endif // DEBUG
-//	}
-//}
 //最原始的搜索，顺序匹配字符串（返回下标）
 int Search(PlateDatabase* DataBase, char* search)
 {
@@ -465,11 +436,11 @@ int SearchInOrder(PlateDatabase* DataBase, char* search, int* SortReasult)
 {
 	//首先我们先取出车牌
 	char tmp[6] = { 'x','x','x','x','x','\0' };
-	tmp[0]=search[1];
-	tmp[1]=search[2];
-	tmp[2]=search[3];
-	tmp[3]=search[4];
-	tmp[4]=search[5];
+	tmp[0] = search[1];
+	tmp[1] = search[2];
+	tmp[2] = search[3];
+	tmp[3] = search[4];
+	tmp[4] = search[5];
 	for (int i = 0; i < DataBase->plateCount; i++)
 	{
 		if (search[0] != DataBase->plate[SortReasult[i]].city)
@@ -491,9 +462,9 @@ int SearchInHalf(PlateDatabase* DataBase, char* search, int* SortReasult)
 	char searchCity = search[0];
 	//中间节点
 	int low = 0;
-	int high = DataBase->plateCount-1;
+	int high = DataBase->plateCount - 1;
 	int mid = (low + high) / 2;
-	int Result = strcmp(searchNumber,DataBase->plate[SortReasult[mid]].number);
+	int Result = strcmp(searchNumber, DataBase->plate[SortReasult[mid]].number);
 	if (Result == 0)
 	{
 		if (searchCity == DataBase->plate[SortReasult[mid]].city)
@@ -501,14 +472,14 @@ int SearchInHalf(PlateDatabase* DataBase, char* search, int* SortReasult)
 	}
 	if (Result < 0)
 	{
-		SearchInHalf(DataBase, searchNumber, searchCity, SortReasult, low, mid-1);
+		SearchInHalf(DataBase, searchNumber, searchCity, SortReasult, low, mid - 1);
 	}
 	else
 	{
-		SearchInHalf(DataBase, searchNumber, searchCity, SortReasult, mid+1, high);
+		SearchInHalf(DataBase, searchNumber, searchCity, SortReasult, mid + 1, high);
 	}
 }
-int SearchInHalf(PlateDatabase* DataBase, char* searchNumber, char searchCity,int* SortReasult, int low, int high)
+int SearchInHalf(PlateDatabase* DataBase, char* searchNumber, char searchCity, int* SortReasult, int low, int high)
 {
 	if (high < low)
 	{
@@ -531,7 +502,7 @@ int SearchInHalf(PlateDatabase* DataBase, char* searchNumber, char searchCity,in
 	}
 }
 //索引查找
-int SearchInIndex(PlateDatabase* DataBase, char* search, int start, int end)
+int SearchInIndex(PlateDatabase* DataBase, char* search, int start, int end, int* SortResult)
 {
 	//首先我们先取出车牌
 	char tmp[6] = { 'x','x','x','x','x','\0' };
@@ -542,11 +513,12 @@ int SearchInIndex(PlateDatabase* DataBase, char* search, int start, int end)
 	tmp[4] = search[5];
 	for (int i = start; i <= end; i++)
 	{
-		if (!strcmp(tmp, DataBase->plate[i].number))
-			return i;
+		if (!strcmp(tmp, DataBase->plate[SortResult[i]].number))
+			return SortResult[i];
 	}
 	return -1;
 }
+//初始化索引列表
 void initIndex(PlateDatabase* DataBase, PlateIndex* Index, int* SortReasult)
 {
 	char flag = 'A';//当前字符

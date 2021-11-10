@@ -36,3 +36,11 @@ int AdminMENU_AddMENU(PlateDatabase* DataBase, PlateIndex* Index);
 int AdminMENU_DeleteMENU(PlateDatabase* DataBase, PlateIndex* Index);
 
 int AdminMENU_ChangeMENU(PlateDatabase* DataBase, PlateIndex* Index);
+
+int CustomMENU(PlateDatabase* DataBase, PlateIndex* Index);
+
+int CustomMENU_SearchMENU_SearchInOrder(PlateDatabase* DataBase, PlateIndex* Index);
+
+int CustomMENU_SearchMENU_SearchInHalf(PlateDatabase* DataBase, PlateIndex* Index);
+
+int CustomMENU_SearchMENU_SearchInIndex(PlateDatabase* DataBase, PlateIndex* Index);

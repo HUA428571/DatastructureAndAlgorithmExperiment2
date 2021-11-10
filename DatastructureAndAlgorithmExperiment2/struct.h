@@ -7,15 +7,15 @@
 #define FONT2_ZH "宋体"
 #define FONT2_EN "Consolas"
 
-#define DEBUG
+//#define DEBUG
 
 //车牌信息结构体
 //我们不考虑新能源车牌，所以说车牌除去地区还有5位
 typedef struct plate
 {
 	char city;						//城市
-	char number[8]="\0";			//车牌号
-	char cartype[64]="\0";			//车辆信息
+	char number[8] = "\0";			//车牌号
+	char cartype[64] = "\0";			//车辆信息
 	char ownerName[64] = "\0";		//车主信息-姓名
 	char ownerPhone[16] = "\0";		//车主信息-手机
 }Plate;
@@ -23,7 +23,7 @@ typedef struct plate
 typedef struct plateDatabase
 {
 	Plate plate[MAXSIZE];
-	int plateCount=0;
+	int plateCount = 0;
 }PlateDatabase;
 
 typedef struct plateIndex
